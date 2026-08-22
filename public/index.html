@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astral Archive - Simple Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="glass-bg"></div>
+
+    <div class="container">
+        <header
+            style="position: relative; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+            <div>
+                <h1 id="appTitle" style="margin: 0;">Astral Archive</h1>
+                <p id="appSubtitle" style="margin: 0.2rem 0 0 0; color: var(--text-dim);">Access your Honkai Star Rail
+                    Roster</p>
+            </div>
+            <div style="position: relative;">
+                <select id="gameSelect"
+                    style="background: rgba(15, 17, 26, 0.75); backdrop-filter: blur(12px); border: 1px solid var(--primary); color: #fff; font-weight: 600; padding: 0.65rem 1.2rem; border-radius: 20px; cursor: pointer; outline: none; font-size: 0.95rem; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4); transition: all 0.2s ease;">
+                    <option value="hsr" style="background: #141726; color: #fff;">💫 Honkai: Star Rail</option>
+                    <option value="genshin" style="background: #141726; color: #fff;">⚔️ Genshin Impact</option>
+                    <option value="zzz" style="background: #141726; color: #fff;">⚡ Zenless Zone Zero</option>
+                </select>
+            </div>
+        </header>
+
+        <div id="statusMsg" class="card hidden"></div>
+
+        <section class="search-section card">
+            <div
+                style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 0.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div style="flex: 1; min-width: 220px;" class="input-group">
+                    <label for="userProfilesSelect">Switch Saved User Profile</label>
+                    <select id="userProfilesSelect"
+                        style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 10px; padding: 0.8rem 1rem; color: white; font-size: 0.95rem; cursor: pointer; outline: none;">
+                        <option value="">-- Select Saved Profile --</option>
+                    </select>
+                </div>
+                <button type="button" class="btn secondary" id="deleteProfileBtn"
+                    style="padding: 0.8rem 1rem; background: rgba(255, 77, 79, 0.15); border: 1px solid #ff4d4f; color: #ff4d4f;">Delete
+                    Profile</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                <div class="input-group">
+                    <label for="profileName">Profile Label/Name</label>
+                    <input type="text" id="profileName" placeholder="e.g. Main Account..." value="Main Account">
+                </div>
+                <div class="input-group">
+                    <label for="uid">User ID (UID)</label>
+                    <input type="text" id="uid" placeholder="Enter UID...">
+                </div>
+            </div>
+
+            <div class="hoyolab-auth">
+                <button class="btn secondary" id="toggleAuth">Hoyolab Settings (ltoken_v2 / ltuid_v2)</button>
+                <div class="auth-fields hidden" id="authFields">
+                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.5rem;">Get these from your
+                        browser cookies on hoyolab.com for full roster fetching.</p>
+                    <div class="input-group">
+                        <label>ltoken_v2</label>
+                        <input type="text" id="ltoken" placeholder="Paste ltoken_v2...">
+                    </div>
+                    <div class="input-group">
+                        <label>ltuid_v2</label>
+                        <input type="text" id="ltuid" placeholder="Paste ltuid_v2...">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                <button class="btn primary" id="searchBtn" style="flex: 2; min-width: 180px;">Fetch Characters</button>
+                <button type="button" class="btn secondary" id="saveProfileBtn"
+                    style="flex: 1; min-width: 140px; background: rgba(74, 144, 226, 0.2); border: 1px solid var(--primary); color: #fff;">Save
+                    Profile</button>
+            </div>
+        </section>
+
+        <nav class="tabs card">
+            <button class="tab-btn active" data-tab="all">All Characters</button>
+            <button class="tab-btn" data-tab="relicTable">Substat Table</button>
+        </nav>
+
+        <div class="search-filter-bar card"
+            style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 1.2rem; padding: 0.8rem 1.2rem;">
+            <div style="flex: 1; min-width: 240px; position: relative;">
+                <input type="text" id="charSearchInput"
+                    placeholder="🔍 Instant search character (e.g. Feixiao, Firefly, Harmony)..."
+                    style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.65rem 1rem; color: #fff; font-size: 0.9rem; outline: none;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                <label for="charSortSelect"
+                    style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600; white-space: nowrap;">Sort
+                    By:</label>
+                <select id="charSortSelect"
+                    style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.65rem 1rem; color: #fff; font-size: 0.85rem; cursor: pointer; outline: none;">
+                    <option value="default">Default (In-Game Roster Order)</option>
+                    <option value="totalRollsDesc">Total Effective Rolls (Highest First)</option>
+                    <option value="levelDesc">Level (Highest First)</option>
+                    <option value="rarityDesc">Rarity (5★ First)</option>
+                    <option value="nameAsc">Name (A - Z)</option>
+                </select>
+                <button type="button" id="favoriteFilterBtn" class="fav-filter-btn"
+                    title="Toggle show favorite characters only">
+                    <span style="font-size: 1.1rem; line-height: 1;">★</span> Favorites
+                </button>
+            </div>
+        </div>
+
+        <main id="characterGrid" class="character-grid">
+            <div class="placeholder-msg">Enter UID and search to see characters.</div>
+        </main>
+
+        <div id="relicTableContainer" class="card hidden"></div>
+    </div>
+
+    <!-- Character Detail Modal -->
+    <div id="charModal" class="overlay hidden">
+        <div class="card modal-content"
+            style="max-width: 680px; width: 92%; max-height: 88vh; overflow-y: auto; position: relative;">
+            <button class="close-btn" id="closeModal"
+                style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; z-index: 10;">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Single Relic Piece Detail & Config Modal -->
+    <div id="pieceModal" class="overlay hidden">
+        <div class="card modal-content"
+            style="max-width: 620px; width: 92%; max-height: 88vh; overflow-y: auto; position: relative;">
+            <button class="close-btn" id="closePieceModal"
+                style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; z-index: 10;">&times;</button>
+            <div id="pieceModalBody"></div>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="overlay hidden">
+        <div class="loader"></div>
+        <p>Interpreting Data...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
