@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? ''
+        : 'https://artifact-display.onrender.com';
+
     // UI Elements
     const searchBtn = document.getElementById('searchBtn');
     const toggleAuthBtn = document.getElementById('toggleAuth');
@@ -977,7 +981,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentGame === 'zzz') {
             throw new Error('Public showcase is not available for ZZZ. Please provide your HoYoLAB ltoken_v2 & ltuid_v2 in settings.');
         }
-        const endpoint = currentGame === 'genshin' ? `/api/enka/${uid}` : `/api/mihomo/${uid}`;
+        const endpoint = currentGame === 'genshin' ? `${API_BASE}/api/enka/${uid}` : `${API_BASE}/api/mihomo/${uid}`;
         const response = await fetch(endpoint);
         const data = await response.json();
 
@@ -1004,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentGame === 'zzz') {
             showMessage('Fetching all Zenless Zone Zero agents & drive discs...', 'info');
-            const response = await fetch('/api/hoyolab/zzz/characters', {
+            const response = await fetch(`${API_BASE}/api/hoyolab/zzz/characters`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ uid, ltoken, ltuid })
@@ -1017,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentGame === 'genshin') {
             // Use the full character detail endpoint which includes artifacts for ALL characters
             showMessage('Fetching all Genshin characters & artifacts... (this may take a moment)', 'info');
-            const response = await fetch('/api/hoyolab/genshin/characters', {
+            const response = await fetch(`${API_BASE}/api/hoyolab/genshin/characters`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ uid, ltoken, ltuid })
@@ -1028,7 +1032,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             cachedCharacters = data.data?.list || [];
         } else {
-            const response = await fetch('/api/hoyolab/roster', {
+            const response = await fetch(`${API_BASE}/api/hoyolab/roster`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ uid, ltoken, ltuid })
