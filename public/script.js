@@ -390,6 +390,12 @@ document.addEventListener('DOMContentLoaded', () => {
         "Geo": ["DEF%", "CRIT Rate", "CRIT DMG", "ATK%"]
     };
 
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            charModal.classList.add('hidden');
+        });
+    }
+
     if (closePieceModalBtn) {
         closePieceModalBtn.addEventListener('click', () => {
             pieceModal.classList.add('hidden');
@@ -401,6 +407,26 @@ document.addEventListener('DOMContentLoaded', () => {
             loadoutModal.classList.add('hidden');
         });
     }
+
+    // Close overlays when clicking outside modal content card (backdrop click)
+    [charModal, pieceModal, loadoutModal].forEach(modal => {
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        }
+    });
+
+    // Close all overlays on ESC key press
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+            [charModal, pieceModal, loadoutModal].forEach(modal => {
+                if (modal) modal.classList.add('hidden');
+            });
+        }
+    });
 
     function isSubstatMatchingEffective(s, st) {
         const propName = (s.name || s.property_name || '').trim();
