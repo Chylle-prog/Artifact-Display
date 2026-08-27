@@ -1980,8 +1980,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return pieceName;
     }
 
-    function getCondensedSetSummary(piecesData) {
+    function getCondensedSetSummary(piecesData, withIcons = true) {
         if (!piecesData || piecesData.length === 0) return 'No Active Sets';
+
+        // Map set names to their piece icons
+        const setIconMap = {};
+        piecesData.forEach(p => {
+            if (p.setName && p.icon && !setIconMap[p.setName]) {
+                setIconMap[p.setName] = p.icon;
+            }
+        });
+
+        const formatSetBadge = (count, setName) => {
+            const iconUrl = setIconMap[setName];
+            const imgTag = (withIcons && iconUrl)
+                ? `<img src="${iconUrl}" style="width: 22px; height: 22px; object-fit: contain; vertical-align: middle; margin-right: 4px; border-radius: 4px; background: rgba(0,0,0,0.3);">`
+                : '';
+            return `<span style="display: inline-flex; align-items: center; white-space: nowrap;">${imgTag}${count}pc ${setName}</span>`;
+        };
 
         const isZzz = currentGame === 'zzz';
         const isGenshin = currentGame === 'genshin';
@@ -1996,12 +2012,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const summaries = [];
             Object.entries(countMap).forEach(([setName, count]) => {
                 if (count >= 4) {
-                    summaries.push(`4pc ${setName}`);
+                    summaries.push(formatSetBadge(4, setName));
                 } else if (count >= 2) {
-                    summaries.push(`2pc ${setName}`);
+                    summaries.push(formatSetBadge(2, setName));
                 }
             });
-            return summaries.length > 0 ? summaries.join(' + ') : 'No Active Sets';
+            return summaries.length > 0 ? summaries.join(' <span style="color: var(--text-dim); margin: 0 4px;">+</span> ') : 'No Active Sets';
         }
 
         // HSR: Slots 1-4 (Cavern Relics), Slots 5-6 (Planar Ornaments)
@@ -2022,19 +2038,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.entries(cavernMap).forEach(([setName, count]) => {
             if (count >= 4) {
-                summaries.push(`4pc ${setName}`);
+                summaries.push(formatSetBadge(4, setName));
             } else if (count >= 2) {
-                summaries.push(`2pc ${setName}`);
+                summaries.push(formatSetBadge(2, setName));
             }
         });
 
         Object.entries(planarMap).forEach(([setName, count]) => {
             if (count >= 2) {
-                summaries.push(`2pc ${setName}`);
+                summaries.push(formatSetBadge(2, setName));
             }
         });
 
-        return summaries.length > 0 ? summaries.join(' + ') : 'No Active Sets';
+        return summaries.length > 0 ? summaries.join(' <span style="color: var(--text-dim); margin: 0 4px;">+</span> ') : 'No Active Sets';
     }
 
     function renderLoadoutModalContent(char, charIdx) {
@@ -2109,7 +2125,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${p.name}</span>
                     </div>
                 </td>
-                <td style="color: var(--text-dim);">${p.setName}</td>
+                <td style="color: var(--text-dim);">
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        ${p.icon ? `<img src="${p.icon}" style="width: 20px; height: 20px; object-fit: contain; border-radius: 4px; background: rgba(0,0,0,0.3);">` : ''}
+                        <span>${p.setName}</span>
+                    </div>
+                </td>
                 <td>
                     <span class="loadout-rolls-pill ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls} roll${p.rolls !== 1 ? 's' : ''}</span>
                 </td>
@@ -2131,7 +2152,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span>${p.name}</span>
                             </div>
                         </td>
-                        <td style="color: var(--text-dim);">${p.setName}</td>
+                        <td style="color: var(--text-dim);">
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                ${p.icon ? `<img src="${p.icon}" style="width: 20px; height: 20px; object-fit: contain; border-radius: 4px; background: rgba(0,0,0,0.3);">` : ''}
+                                <span>${p.setName}</span>
+                            </div>
+                        </td>
                         <td>
                             <span class="loadout-rolls-pill ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls} roll${p.rolls !== 1 ? 's' : ''}</span>
                         </td>
