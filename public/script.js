@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const pieceModalBody = document.getElementById('pieceModalBody');
     const closePieceModalBtn = document.getElementById('closePieceModal');
 
+    const loadoutModal = document.getElementById('loadoutModal');
+    const loadoutModalBody = document.getElementById('loadoutModalBody');
+    const closeLoadoutModalBtn = document.getElementById('closeLoadoutModal');
+
     const userProfilesSelect = document.getElementById('userProfilesSelect');
     const profileNameInput = document.getElementById('profileName');
     const saveProfileBtn = document.getElementById('saveProfileBtn');
@@ -392,6 +396,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (closeLoadoutModalBtn) {
+        closeLoadoutModalBtn.addEventListener('click', () => {
+            loadoutModal.classList.add('hidden');
+        });
+    }
+
     function isSubstatMatchingEffective(s, st) {
         const propName = (s.name || s.property_name || '').trim();
         if (!propName) return false;
@@ -469,21 +479,283 @@ document.addEventListener('DOMContentLoaded', () => {
         return map[stat] || stat;
     }
 
+    const HSR_CHAR_PATHS = {
+        // Destruction
+        1008: "Destruction", // Arlan
+        1107: "Destruction", // Clara
+        1109: "Destruction", // Hook
+        1205: "Destruction", // Blade
+        1212: "Destruction", // Jingliu
+        1213: "Destruction", // Dan Heng • Imbibitor Lunae
+        1214: "Destruction", // Xueyi
+        1221: "Destruction", // Yunli
+        1303: "Destruction", // Misha
+        1310: "Destruction", // Firefly
+        1404: "Destruction", // Mydei
+        8001: "Destruction", // Trailblazer (Physical M)
+        8002: "Destruction", // Trailblazer (Physical F)
+
+        // The Hunt
+        1002: "The Hunt", // Dan Heng
+        1102: "The Hunt", // Seele
+        1112: "The Hunt", // Topaz & Numby
+        1206: "The Hunt", // Sushang
+        1209: "The Hunt", // Yanqing
+        1220: "The Hunt", // Feixiao
+        1223: "The Hunt", // Moze
+        1224: "The Hunt", // March 7th (The Hunt)
+        1305: "The Hunt", // Dr. Ratio
+        1315: "The Hunt", // Boothill
+
+        // Erudition
+        1003: "Erudition", // Himeko
+        1013: "Erudition", // Herta
+        1103: "Erudition", // Serval
+        1201: "Erudition", // Qingque
+        1204: "Erudition", // Jing Yuan
+        1302: "Erudition", // Argenti
+        1308: "Erudition", // Jade
+        1317: "Erudition", // Rappa
+        1401: "Erudition", // The Herta
+        1402: "Erudition", // Anaxa
+
+        // Harmony
+        1009: "Harmony", // Asta
+        1101: "Harmony", // Bronya
+        1202: "Harmony", // Tingyun
+        1207: "Harmony", // Yukong
+        1215: "Harmony", // Hanya
+        1306: "Harmony", // Sparkle
+        1309: "Harmony", // Robin
+        1312: "Harmony", // Ruan Mei
+        1313: "Harmony", // Sunday
+        1403: "Harmony", // Tribbie
+        8005: "Harmony", // Trailblazer (Imaginary M)
+        8006: "Harmony", // Trailblazer (Imaginary F)
+
+        // Nihility
+        1004: "Nihility", // Welt
+        1005: "Nihility", // Kafka
+        1006: "Nihility", // Silver Wolf
+        1106: "Nihility", // Pela
+        1108: "Nihility", // Sampo
+        1111: "Nihility", // Luka
+        1210: "Nihility", // Guinaifen
+        1218: "Nihility", // Jiaoqiu
+        1225: "Nihility", // Fugue
+        1304: "Nihility", // Black Swan
+        1307: "Nihility", // Acheron
+        1405: "Nihility", // Cipher
+
+        // Preservation
+        1001: "Preservation", // March 7th (Preservation)
+        1104: "Preservation", // Gepard
+        1208: "Preservation", // Fu Xuan
+        1304: "Preservation", // Aventurine (or 1308)
+        8003: "Preservation", // Trailblazer (Fire M)
+        8004: "Preservation", // Trailblazer (Fire F)
+
+        // Abundance
+        1105: "Abundance", // Natasha
+        1110: "Abundance", // Lynx
+        1203: "Abundance", // Bailu
+        1205: "Abundance", // Luocha
+        1217: "Abundance", // Huohuo
+        1222: "Abundance", // Lingsha
+        1301: "Abundance", // Gallagher
+        1406: "Abundance", // Hyacine
+
+        // Remembrance
+        1407: "Remembrance", // Castorice
+        1408: "Remembrance", // Aglaea
+        1409: "Remembrance", // The Dahlia
+        1410: "Remembrance", // Evernight
+        8007: "Remembrance", // Trailblazer (Ice M)
+        8008: "Remembrance", // Trailblazer (Ice F)
+    };
+
+    const HSR_NAME_TO_PATH = {
+        "arlan": "Destruction",
+        "blade": "Destruction",
+        "clara": "Destruction",
+        "dan heng • imbibitor lunae": "Destruction",
+        "dan heng imbibitor lunae": "Destruction",
+        "dan heng • il": "Destruction",
+        "dan heng il": "Destruction",
+        "imbibitor lunae": "Destruction",
+        "firefly": "Destruction",
+        "hook": "Destruction",
+        "pitch-dark hook the great": "Destruction",
+        "jingliu": "Destruction",
+        "misha": "Destruction",
+        "xueyi": "Destruction",
+        "yunli": "Destruction",
+        "mydei": "Destruction",
+
+        "boothill": "The Hunt",
+        "dan heng": "The Hunt",
+        "dr. ratio": "The Hunt",
+        "dr ratio": "The Hunt",
+        "feixiao": "The Hunt",
+        "moze": "The Hunt",
+        "seele": "The Hunt",
+        "sushang": "The Hunt",
+        "topaz": "The Hunt",
+        "topaz & numby": "The Hunt",
+        "topaz and numby": "The Hunt",
+        "yanqing": "The Hunt",
+
+        "argenti": "Erudition",
+        "herta": "Erudition",
+        "the herta": "Erudition",
+        "himeko": "Erudition",
+        "jade": "Erudition",
+        "jing yuan": "Erudition",
+        "qingque": "Erudition",
+        "rappa": "Erudition",
+        "serval": "Erudition",
+        "anaxa": "Erudition",
+
+        "asta": "Harmony",
+        "bronya": "Harmony",
+        "hanya": "Harmony",
+        "robin": "Harmony",
+        "ruan mei": "Harmony",
+        "sparkle": "Harmony",
+        "sunday": "Harmony",
+        "tingyun": "Harmony",
+        "yukong": "Harmony",
+        "tribbie": "Harmony",
+
+        "acheron": "Nihility",
+        "black swan": "Nihility",
+        "guinaifen": "Nihility",
+        "jiaoqiu": "Nihility",
+        "kafka": "Nihility",
+        "luka": "Nihility",
+        "pela": "Nihility",
+        "sampo": "Nihility",
+        "silver wolf": "Nihility",
+        "fugue": "Nihility",
+        "cipher": "Nihility",
+        "welt": "Nihility",
+
+        "aventurine": "Preservation",
+        "fu xuan": "Preservation",
+        "gepard": "Preservation",
+
+        "bailu": "Abundance",
+        "gallagher": "Abundance",
+        "huohuo": "Abundance",
+        "lingsha": "Abundance",
+        "luocha": "Abundance",
+        "lynx": "Abundance",
+        "natasha": "Abundance",
+        "hyacine": "Abundance",
+
+        "aglaea": "Remembrance",
+        "castorice": "Remembrance",
+        "evernight": "Remembrance",
+        "the dahlia": "Remembrance",
+        "ashveil": "Remembrance",
+        "dan heng • permansor terrae": "Remembrance",
+        "permansor terrae": "Remembrance"
+    };
+
+    const MIHOMO_PATH_ID_MAP = {
+        "warrior": "Destruction",
+        "rogue": "The Hunt",
+        "mage": "Erudition",
+        "shaman": "Harmony",
+        "warlock": "Nihility",
+        "knight": "Preservation",
+        "priest": "Abundance",
+        "memory": "Remembrance",
+        "remembrance": "Remembrance"
+    };
+
+    function getCharacterPath(char) {
+        if (!char) return 'Unknown';
+
+        // 1. Direct path object or string (e.g. from Mihomo / Enka)
+        if (typeof char.path === 'string' && char.path.trim()) {
+            return char.path.trim();
+        }
+        if (char.path?.name && typeof char.path.name === 'string') {
+            return char.path.name.trim();
+        }
+        if (char.path?.id && MIHOMO_PATH_ID_MAP[char.path.id.toLowerCase()]) {
+            return MIHOMO_PATH_ID_MAP[char.path.id.toLowerCase()];
+        }
+        if (char.path_name) {
+            return char.path_name;
+        }
+
+        const rawName = (char.name || char.avatar_name || '').toLowerCase();
+        const charId = Number(char.id || char.avatar_id);
+        const element = (typeof char.element === 'string' ? char.element : (char.element?.name || char.element_name || '')).toLowerCase();
+
+        // 2. Multi-form characters
+        // Trailblazer
+        if (rawName.includes('trailblazer') || rawName.includes('caelus') || rawName.includes('stelle') || (charId >= 8001 && charId <= 8008)) {
+            if (charId === 8001 || charId === 8002 || element === 'physical' || rawName.includes('destruction')) return 'Destruction';
+            if (charId === 8003 || charId === 8004 || element === 'fire' || rawName.includes('preservation')) return 'Preservation';
+            if (charId === 8005 || charId === 8006 || element === 'imaginary' || rawName.includes('harmony')) return 'Harmony';
+            if (charId === 8007 || charId === 8008 || element === 'ice' || rawName.includes('remembrance')) return 'Remembrance';
+            return 'Destruction';
+        }
+
+        // March 7th
+        if (rawName.includes('march 7th') || rawName.includes('march7th') || charId === 1001 || charId === 1224) {
+            if (charId === 1224 || element === 'imaginary' || rawName.includes('hunt')) return 'The Hunt';
+            return 'Preservation';
+        }
+
+        // 3. Lookup by character ID
+        if (charId && HSR_CHAR_PATHS[charId]) {
+            return HSR_CHAR_PATHS[charId];
+        }
+
+        // 4. Lookup by name
+        const cleanName = rawName.replace(/[^a-z0-9\s•]/g, '').trim();
+        if (HSR_NAME_TO_PATH[cleanName]) {
+            return HSR_NAME_TO_PATH[cleanName];
+        }
+        for (const key of Object.keys(HSR_NAME_TO_PATH)) {
+            if (cleanName.includes(key) || key.includes(cleanName)) {
+                return HSR_NAME_TO_PATH[key];
+            }
+        }
+
+        return 'Unknown';
+    }
+
     function getDisplayName(char) {
         if (!char) return 'Unknown';
         const rawName = char.name || char.avatar_name || 'Unknown';
-        if (rawName.includes('Trailblazer')) {
-            const pathName = typeof char.path === 'string' ? char.path : (char.path?.name || '');
-            const elemName = typeof char.element === 'string' ? char.element : (char.element?.name || char.element_name || '');
-            const formLabel = pathName || elemName;
-            if (formLabel) {
-                return `Trailblazer (${formLabel})`;
+        if (rawName.includes('Trailblazer') || rawName.includes('Caelus') || rawName.includes('Stelle')) {
+            const pathName = getCharacterPath(char);
+            if (pathName && pathName !== 'Unknown') {
+                return `Trailblazer (${pathName})`;
             }
-        }
-        if (rawName.includes('Traveler')) {
             const elemName = typeof char.element === 'string' ? char.element : (char.element?.name || char.element_name || '');
             if (elemName) {
-                return `Traveler (${elemName})`;
+                const formattedElem = elemName.charAt(0).toUpperCase() + elemName.slice(1).toLowerCase();
+                return `Trailblazer (${formattedElem})`;
+            }
+        }
+        if (rawName.toLowerCase().startsWith('march 7th') || rawName.toLowerCase() === 'march 7th') {
+            const pathName = getCharacterPath(char);
+            if (pathName === 'The Hunt') {
+                return 'March 7th (The Hunt)';
+            }
+            return 'March 7th';
+        }
+        if (rawName.includes('Traveler') || rawName.includes('Aether') || rawName.includes('Lumine')) {
+            const elemName = typeof char.element === 'string' ? char.element : (char.element?.name || char.element_name || '');
+            if (elemName) {
+                const formattedElem = elemName.charAt(0).toUpperCase() + elemName.slice(1).toLowerCase();
+                return `Traveler (${formattedElem})`;
             }
         }
         return rawName;
@@ -508,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (defaultsDict[displayName]) return defaultsDict[displayName];
         if (defaultsDict[rawName]) return defaultsDict[rawName];
 
-        const pathName = typeof char.path === 'string' ? char.path : (char.path?.name || char.element || char.element?.name || '');
+        const pathName = getCharacterPath(char) || (typeof char.element === 'string' ? char.element : char.element?.name || '');
         const pathDict = isGenshin ? GENSHIN_PATH_EFFECTIVE_STATS : PATH_EFFECTIVE_STATS;
         if (pathDict[pathName]) return pathDict[pathName];
 
@@ -1131,7 +1403,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!query) return true;
             const searchStr = query.toLowerCase();
-            const path = (typeof char.path === 'string' ? char.path : (char.path?.name || '')).toLowerCase();
+            const path = (getCharacterPath(char) || '').toLowerCase();
             const element = (typeof char.element === 'string' ? char.element : (char.element?.name || char.element_name || '')).toLowerCase();
             return name.toLowerCase().includes(searchStr) || path.includes(searchStr) || element.includes(searchStr);
         });
@@ -1308,7 +1580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </td>
                     ${cellsHtml}
-                    <td style="font-weight: 700; color: var(--primary); font-size: 1.1rem;" onclick="showDetailsByIndex(${idx})">${totalEffectiveRolls}</td>
+                    <td style="font-weight: 700; color: var(--primary); font-size: 1.1rem; cursor: pointer;" onclick="showLoadoutsByIndex(${idx})" title="Click to view Relics, Planars & Loadouts">${totalEffectiveRolls}</td>
                 </tr>
             `;
         }).join('');
@@ -1394,7 +1666,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isZzz = currentGame === 'zzz';
         const isGenshin = currentGame === 'genshin';
         const equip = char.equipment || char.equip;
-        const pathName = typeof char.path === 'string' ? char.path : (char.path?.name || 'Unknown');
+        const pathName = getCharacterPath(char);
 
         // Genshin & ZZZ specific fields
         const constellation = char.constellation !== undefined ? char.constellation : (char.rank || 0);
@@ -1414,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let pathLabel = 'Path';
-        let pathValue = pathName;
+        let pathValue = pathName || 'Unknown';
         if (isZzz) {
             pathLabel = 'Specialty';
             pathValue = char.specialty || char.element || 'Agent';
@@ -1612,6 +1884,264 @@ document.addEventListener('DOMContentLoaded', () => {
             ${artifactSectionHtml}
         `;
         charModal.classList.remove('hidden');
+    };
+
+    // Loadouts & Simplified Total Rolls Modal Implementation
+    window.showLoadoutsByIndex = function (charIdx) {
+        const char = cachedCharacters[charIdx];
+        if (!char) return;
+        renderLoadoutModalContent(char, charIdx);
+        loadoutModal.classList.remove('hidden');
+    };
+
+    function getLoadoutsKey(charName) {
+        const uid = uidInput?.value?.trim() || localStorage.getItem(`${currentGame}_uid`) || 'default';
+        return `${currentGame}_loadouts_${charName}_${uid}`;
+    }
+
+    function getSavedLoadouts(charName) {
+        try {
+            const stored = localStorage.getItem(getLoadoutsKey(charName));
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveLoadoutList(charName, loadouts) {
+        localStorage.setItem(getLoadoutsKey(charName), JSON.stringify(loadouts));
+    }
+
+    function getPieceSetName(relic) {
+        if (!relic) return 'Empty Slot';
+        if (relic.set_name) return relic.set_name;
+        if (relic.set && relic.set.name) return relic.set.name;
+        if (relic.name) return relic.name;
+        return 'Unknown Set';
+    }
+
+    function renderLoadoutModalContent(char, charIdx) {
+        const name = getDisplayName(char);
+
+        // Header: ONLY Character Image and Name (no stats, no level, no eidolons, no light cones)
+        const rawIcon = char.icon || char.preview || char.portrait || char.image || char.avatar_icon || '';
+        let imageUrl = '';
+        if (rawIcon.startsWith('http')) {
+            imageUrl = rawIcon;
+        } else if (rawIcon) {
+            imageUrl = `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/${rawIcon}`;
+        }
+        const svgFallback = getSvgFallback(name);
+
+        const isZzz = currentGame === 'zzz';
+        const isGenshin = currentGame === 'genshin';
+        const slotNames = isZzz ? {
+            1: "Disc 1", 2: "Disc 2", 3: "Disc 3", 4: "Disc 4", 5: "Disc 5", 6: "Disc 6"
+        } : (isGenshin ? {
+            1: "Flower", 2: "Feather", 3: "Sands", 4: "Goblet", 5: "Circlet"
+        } : {
+            1: "Head", 2: "Hands", 3: "Body", 4: "Feet", 5: "Sphere", 6: "Rope"
+        });
+
+        const positions = isGenshin ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6];
+        const effectiveStatList = getEffectiveStatsForChar(char);
+        const allRelics = [...(char.relics || []), ...(char.ornaments || [])];
+
+        let totalRolls = 0;
+        const currentPiecesData = [];
+
+        positions.forEach(pos => {
+            const relic = allRelics.find(r => (r.pos === pos || r.type === pos));
+            const slotTitle = slotNames[pos] || `Slot ${pos}`;
+            if (!relic) {
+                currentPiecesData.push({
+                    pos,
+                    slotTitle,
+                    name: 'Empty Slot',
+                    setName: 'None',
+                    icon: '',
+                    rolls: 0
+                });
+            } else {
+                const res = calculateRelicEffectiveRolls(relic, effectiveStatList, upgradesOnlyMode);
+                const rolls = res.rolls;
+                totalRolls += rolls;
+                const relicIcon = relic.icon ? (relic.icon.startsWith('http') ? relic.icon : `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/${relic.icon}`) : '';
+                const setName = getPieceSetName(relic);
+                currentPiecesData.push({
+                    pos,
+                    slotTitle,
+                    name: relic.name || setName,
+                    setName: setName,
+                    icon: relicIcon,
+                    rolls: rolls
+                });
+            }
+        });
+
+        // Compute active set summaries
+        const setCountMap = {};
+        currentPiecesData.forEach(p => {
+            if (p.setName !== 'None' && p.setName !== 'Empty Slot') {
+                setCountMap[p.setName] = (setCountMap[p.setName] || 0) + 1;
+            }
+        });
+        const setSummaryParts = Object.entries(setCountMap).map(([setName, count]) => `${count}pc ${setName}`);
+        const currentSetSummary = setSummaryParts.length > 0 ? setSummaryParts.join(' + ') : 'No Active Sets';
+
+        // Render Current Equipped Loadout Table
+        const currentTableRowsHtml = currentPiecesData.map(p => `
+            <tr>
+                <td style="font-weight: 600; color: var(--primary);">${p.slotTitle}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        ${p.icon ? `<img src="${p.icon}" class="loadout-relic-icon">` : ''}
+                        <span>${p.name}</span>
+                    </div>
+                </td>
+                <td style="color: var(--text-dim);">${p.setName}</td>
+                <td>
+                    <span class="loadout-rolls-pill ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls} roll${p.rolls !== 1 ? 's' : ''}</span>
+                </td>
+            </tr>
+        `).join('');
+
+        // Fetch Saved Loadouts from localStorage
+        const savedLoadouts = getSavedLoadouts(name);
+
+        const savedLoadoutsCardsHtml = savedLoadouts.length === 0
+            ? `<div style="color: var(--text-dim); font-style: italic; font-size: 0.88rem; text-align: center; padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 10px;">No saved loadouts yet. Use the form above to save your current build configuration.</div>`
+            : savedLoadouts.map((loadout) => {
+                const savedRowsHtml = (loadout.pieces || []).map(p => `
+                    <tr>
+                        <td style="font-weight: 600; color: var(--primary);">${p.slotTitle}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                ${p.icon ? `<img src="${p.icon}" class="loadout-relic-icon">` : ''}
+                                <span>${p.name}</span>
+                            </div>
+                        </td>
+                        <td style="color: var(--text-dim);">${p.setName}</td>
+                        <td>
+                            <span class="loadout-rolls-pill ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls} roll${p.rolls !== 1 ? 's' : ''}</span>
+                        </td>
+                    </tr>
+                `).join('');
+
+                const nameEscaped = name.replace(/'/g, "\\'");
+
+                return `
+                    <div class="saved-loadout-card">
+                        <div class="loadout-card-header">
+                            <div>
+                                <strong style="font-size: 1.1rem; color: #fff;">${loadout.name}</strong>
+                                <span style="font-size: 0.75rem; color: var(--text-dim); margin-left: 0.5rem;">Saved ${loadout.savedAt || ''}</span>
+                                <div style="font-size: 0.82rem; color: var(--primary); margin-top: 0.2rem;">${loadout.setSummary || 'Custom Build'}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                <span style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">${loadout.totalRolls} Total Rolls</span>
+                                <button type="button" class="btn secondary" onclick="handleDeleteLoadout('${nameEscaped}', '${loadout.id}', ${charIdx})" style="padding: 0.3rem 0.7rem; font-size: 0.78rem; background: rgba(255, 77, 79, 0.15); border-color: #ff4d4f; color: #ff4d4f;">Delete</button>
+                            </div>
+                        </div>
+                        <table class="loadout-relic-table">
+                            <thead>
+                                <tr>
+                                    <th>Slot</th>
+                                    <th>Piece</th>
+                                    <th>Set</th>
+                                    <th>Rolls</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${savedRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }).join('');
+
+        loadoutModalBody.innerHTML = `
+            <!-- Header: Character Image + Name ONLY (No stats, level, or light cone) -->
+            <div class="loadout-header">
+                <img src="${imageUrl || svgFallback}" class="loadout-char-img" onerror="this.onerror=null; this.src='${svgFallback}';">
+                <div>
+                    <h2 style="margin: 0; color: #fff; font-size: 1.4rem;">${name}</h2>
+                    <div style="color: var(--text-dim); font-size: 0.85rem; margin-top: 2px;">Relics, Planars & Loadouts</div>
+                </div>
+            </div>
+
+            <!-- Current Equipped Loadout Section -->
+            <div class="loadout-card current">
+                <div class="loadout-card-header">
+                    <div>
+                        <span class="loadout-badge">Current Equipped Loadout</span>
+                        <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.4rem;">Sets: <strong style="color: #fff;">${currentSetSummary}</strong></div>
+                    </div>
+                    <div>
+                        <span style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">${totalRolls} Total Rolls</span>
+                    </div>
+                </div>
+
+                <table class="loadout-relic-table">
+                    <thead>
+                        <tr>
+                            <th>Slot</th>
+                            <th>Piece</th>
+                            <th>Set</th>
+                            <th>Rolls</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${currentTableRowsHtml}
+                    </tbody>
+                </table>
+
+                <!-- Form to Save Current Loadout -->
+                <div class="save-loadout-form">
+                    <input type="text" id="loadoutNameInput" placeholder="e.g. Speed Build, MOC Set..." value="Loadout ${savedLoadouts.length + 1}">
+                    <button type="button" class="btn primary" id="saveLoadoutBtn" style="padding: 0.6rem 1.2rem; font-size: 0.88rem; white-space: nowrap;">Save Current Loadout</button>
+                </div>
+            </div>
+
+            <!-- Saved Loadouts Section -->
+            <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                Saved Loadouts (${savedLoadouts.length})
+            </h3>
+            <div class="saved-loadouts-list">
+                ${savedLoadoutsCardsHtml}
+            </div>
+        `;
+
+        // Bind Save Loadout Button
+        const saveLoadoutBtn = document.getElementById('saveLoadoutBtn');
+        const loadoutNameInput = document.getElementById('loadoutNameInput');
+        if (saveLoadoutBtn) {
+            saveLoadoutBtn.addEventListener('click', () => {
+                const customName = (loadoutNameInput.value || '').trim() || `Loadout ${savedLoadouts.length + 1}`;
+                const newLoadout = {
+                    id: 'loadout_' + Date.now(),
+                    name: customName,
+                    savedAt: new Date().toLocaleDateString(),
+                    totalRolls: totalRolls,
+                    setSummary: currentSetSummary,
+                    pieces: currentPiecesData
+                };
+                const existing = getSavedLoadouts(name);
+                existing.push(newLoadout);
+                saveLoadoutList(name, existing);
+                renderLoadoutModalContent(char, charIdx);
+            });
+        }
+    };
+
+    window.handleDeleteLoadout = function (charName, loadoutId, charIdx) {
+        if (!confirm('Are you sure you want to delete this saved loadout?')) return;
+        let existing = getSavedLoadouts(charName);
+        existing = existing.filter(l => l.id !== loadoutId);
+        saveLoadoutList(charName, existing);
+        if (cachedCharacters && cachedCharacters[charIdx]) {
+            renderLoadoutModalContent(cachedCharacters[charIdx], charIdx);
+        }
     };
 
     function showLoading(show) {
