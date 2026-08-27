@@ -1913,11 +1913,128 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getPieceSetName(relic) {
-        if (!relic) return 'Empty Slot';
+        if (!relic) return 'None';
         if (relic.set_name) return relic.set_name;
         if (relic.set && relic.set.name) return relic.set.name;
-        if (relic.name) return relic.name;
-        return 'Unknown Set';
+        if (relic.relic_set) return relic.relic_set;
+
+        const pieceName = relic.name || '';
+        if (!pieceName) return 'Unknown Set';
+
+        // Known HSR / Genshin / ZZZ set prefix maps
+        const knownSetPrefixes = {
+            "Deliverer": "Hero of Triumphant Song",
+            "Hero of Triumphant Song": "Hero of Triumphant Song",
+            "Lushaka": "Lushaka, the Sunken Seas",
+            "Musketeer": "Musketeer of Wild Wheat",
+            "Passerby": "Passerby of Wandering Cloud",
+            "Pioneer": "Pioneer Diver of Dead Waters",
+            "Wastelander": "Wastelander of Banditry Desert",
+            "Eagle": "Eagle of Twilight Line",
+            "Thief": "Thief of Shooting Meteor",
+            "Champion": "Champion of Streetwise Boxing",
+            "Guard": "Guard of Wuthering Snow",
+            "Firesmith": "Firesmith of Lava-Forging",
+            "Genius": "Genius of Brilliant Stars",
+            "Sizzling": "Band of Sizzling Thunder",
+            "Longevous": "Longevous Disciple",
+            "Messenger": "Messenger Traversing Hackerspace",
+            "Ashblazing": "The Ashblazing Grand Duke",
+            "Grand Duke": "The Ashblazing Grand Duke",
+            "Prisoner": "Prisoner in Deep Confinement",
+            "Watchmaker": "Watchmaker, Master of Dream Machinations",
+            "Iron Cavalry": "Iron Cavalry Against the Scourge",
+            "Valorous": "The Wind-Soaring Valorous",
+            "Sanguine": "Sanguine Cross",
+            "Scholar": "Scholar Lost in Erudition",
+            "Space Sealing": "Space Sealing Station",
+            "Fleet": "Fleet of the Ageless",
+            "Pan-Cosmic": "Pan-Cosmic Commercial Enterprise",
+            "Belobog": "Belobog of the Architects",
+            "Celestial": "Celestial Differentiator",
+            "Salsotto": "Inert Salsotto",
+            "Talia": "Talia: Kingdom of Banditry",
+            "Vonwacq": "Sprightly Vonwacq",
+            "Rutilant": "Rutilant Arena",
+            "Broken Keel": "Broken Keel",
+            "Penacony": "Penacony, Land of the Dreams",
+            "Glamoth": "Firmament Frontline: Glamoth",
+            "Izumo": "Izumo Gensei and Takama Divine Realm",
+            "Sigonia": "Sigonia, the Unclaimed Desolation",
+            "Duran": "Duran, Dynasty of Running Wolves",
+            "Kalpagni": "Forge of the Kalpagni Lantern",
+            "BananAmusement": "The Wondrous BananAmusement Park",
+            "Bone Collection": "Bone Collection's Serene Demesne"
+        };
+
+        for (const [prefix, fullSetName] of Object.entries(knownSetPrefixes)) {
+            if (pieceName.includes(prefix)) {
+                return fullSetName;
+            }
+        }
+
+        if (pieceName.includes("'s ")) {
+            return pieceName.split("'s ")[0].trim();
+        }
+
+        return pieceName;
+    }
+
+    function getCondensedSetSummary(piecesData) {
+        if (!piecesData || piecesData.length === 0) return 'No Active Sets';
+
+        const isZzz = currentGame === 'zzz';
+        const isGenshin = currentGame === 'genshin';
+
+        if (isGenshin || isZzz) {
+            const countMap = {};
+            piecesData.forEach(p => {
+                if (p.setName && p.setName !== 'None' && p.setName !== 'Empty Slot') {
+                    countMap[p.setName] = (countMap[p.setName] || 0) + 1;
+                }
+            });
+            const summaries = [];
+            Object.entries(countMap).forEach(([setName, count]) => {
+                if (count >= 4) {
+                    summaries.push(`4pc ${setName}`);
+                } else if (count >= 2) {
+                    summaries.push(`2pc ${setName}`);
+                }
+            });
+            return summaries.length > 0 ? summaries.join(' + ') : 'No Active Sets';
+        }
+
+        // HSR: Slots 1-4 (Cavern Relics), Slots 5-6 (Planar Ornaments)
+        const cavernMap = {};
+        const planarMap = {};
+
+        piecesData.forEach(p => {
+            if (p.setName && p.setName !== 'None' && p.setName !== 'Empty Slot') {
+                if (p.pos <= 4) {
+                    cavernMap[p.setName] = (cavernMap[p.setName] || 0) + 1;
+                } else {
+                    planarMap[p.setName] = (planarMap[p.setName] || 0) + 1;
+                }
+            }
+        });
+
+        const summaries = [];
+
+        Object.entries(cavernMap).forEach(([setName, count]) => {
+            if (count >= 4) {
+                summaries.push(`4pc ${setName}`);
+            } else if (count >= 2) {
+                summaries.push(`2pc ${setName}`);
+            }
+        });
+
+        Object.entries(planarMap).forEach(([setName, count]) => {
+            if (count >= 2) {
+                summaries.push(`2pc ${setName}`);
+            }
+        });
+
+        return summaries.length > 0 ? summaries.join(' + ') : 'No Active Sets';
     }
 
     function renderLoadoutModalContent(char, charIdx) {
@@ -1979,15 +2096,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Compute active set summaries
-        const setCountMap = {};
-        currentPiecesData.forEach(p => {
-            if (p.setName !== 'None' && p.setName !== 'Empty Slot') {
-                setCountMap[p.setName] = (setCountMap[p.setName] || 0) + 1;
-            }
-        });
-        const setSummaryParts = Object.entries(setCountMap).map(([setName, count]) => `${count}pc ${setName}`);
-        const currentSetSummary = setSummaryParts.length > 0 ? setSummaryParts.join(' + ') : 'No Active Sets';
+        // Compute active set summaries (condensed 4pc / 2pc)
+        const currentSetSummary = getCondensedSetSummary(currentPiecesData);
 
         // Render Current Equipped Loadout Table
         const currentTableRowsHtml = currentPiecesData.map(p => `
@@ -2029,6 +2139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `).join('');
 
                 const nameEscaped = name.replace(/'/g, "\\'");
+                const setSummaryDisplay = getCondensedSetSummary(loadout.pieces || []);
 
                 return `
                     <div class="saved-loadout-card">
@@ -2036,7 +2147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div>
                                 <strong style="font-size: 1.1rem; color: #fff;">${loadout.name}</strong>
                                 <span style="font-size: 0.75rem; color: var(--text-dim); margin-left: 0.5rem;">Saved ${loadout.savedAt || ''}</span>
-                                <div style="font-size: 0.82rem; color: var(--primary); margin-top: 0.2rem;">${loadout.setSummary || 'Custom Build'}</div>
+                                <div style="font-size: 0.82rem; color: var(--primary); margin-top: 0.2rem;">${setSummaryDisplay}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.8rem;">
                                 <span style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">${loadout.totalRolls} Total Rolls</span>
