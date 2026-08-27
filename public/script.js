@@ -1921,17 +1921,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const pieceName = relic.name || '';
         if (!pieceName) return 'Unknown Set';
 
-        // Known HSR / Genshin / ZZZ set prefix maps
+        // Known HSR (55 sets) / Genshin / ZZZ set prefix & keyword maps
         const knownSetPrefixes = {
-            // HSR Relics & Planars
-            "Sacerdos": "Sacerdos' Reliquary",
-            "Deliverer": "Hero of Triumphant Song",
-            "Hero of Triumphant Song": "Hero of Triumphant Song",
+            // Cavern Relic Sets (27+ sets)
+            "Divine-Querying": "Divine-Querying Master Smith",
+            "Master Smith": "Divine-Querying Master Smith",
+            "Navigator Isee": "As Navigator Isee Sees It",
+            "Navigator": "As Navigator Isee Sees It",
+            "Ever-Glorious": "Ever-Glorious Magical Girl",
+            "Magical Girl": "Ever-Glorious Magical Girl",
+            "Diviner of Distant": "Diviner of Distant Reach",
+            "Distant Reach": "Diviner of Distant Reach",
+            "Self-Enshrouded": "Self-Enshrouded Recluse",
+            "Recluse": "Self-Enshrouded Recluse",
+            "World-Remaking": "World-Remaking Deliverer",
+            "Wavestrider": "Wavestrider Captain",
+            "Warrior Goddess": "Warrior Goddess of Sun and Thunder",
+            "Sun and Thunder": "Warrior Goddess of Sun and Thunder",
             "Poet": "Poet of Mourning Collapse",
+            "Mourning Collapse": "Poet of Mourning Collapse",
+            "Hero of Triumphant": "Hero of Triumphant Song",
+            "Triumphant Song": "Hero of Triumphant Song",
+            "Deliverer": "Hero of Triumphant Song",
+            "Sacerdos": "Sacerdos' Relived Ordeal",
+            "Relived Ordeal": "Sacerdos' Relived Ordeal",
             "Scholar": "Scholar Lost in Erudition",
+            "Erudition": "Scholar Lost in Erudition",
             "Valorous": "The Wind-Soaring Valorous",
             "Wind-Soaring": "The Wind-Soaring Valorous",
             "Iron Cavalry": "Iron Cavalry Against the Scourge",
+            "Scourge": "Iron Cavalry Against the Scourge",
             "Watchmaker": "Watchmaker, Master of Dream Machinations",
             "Pioneer": "Pioneer Diver of Dead Waters",
             "Diver": "Pioneer Diver of Dead Waters",
@@ -1942,40 +1961,70 @@ document.addEventListener('DOMContentLoaded', () => {
             "Hackerspace": "Messenger Traversing Hackerspace",
             "Longevous": "Longevous Disciple",
             "Disciple": "Longevous Disciple",
-            "Wastelander": "Wastelander of Banditry Desert",
-            "Thief": "Thief of Shooting Meteor",
-            "Eagle": "Eagle of Twilight Line",
+            "Passerby": "Passerby of Wandering Cloud",
+            "Musketeer": "Musketeer of Wild Wheat",
+            "Glacial Forest": "Hunter of Glacial Forest",
+            "Hunter": "Hunter of Glacial Forest",
+            "Purity Palace": "Knight of Purity Palace",
+            "Knight": "Knight of Purity Palace",
             "Sizzling": "Band of Sizzling Thunder",
             "Band of Sizzling": "Band of Sizzling Thunder",
-            "Genius": "Genius of Brilliant Stars",
-            "Firesmith": "Firesmith of Lava-Forging",
-            "Guard": "Guard of Wuthering Snow",
+            "Streetwise Boxing": "Champion of Streetwise Boxing",
             "Champion": "Champion of Streetwise Boxing",
-            "Hunter": "Hunter of Glacial Forest",
-            "Knight": "Knight of Purity Palace",
-            "Musketeer": "Musketeer of Wild Wheat",
-            "Passerby": "Passerby of Wandering Cloud",
-            "Lushaka": "Lushaka, the Sunken Seas",
-            "BananAmusement": "The Wondrous BananAmusement Park",
+            "Shooting Meteor": "Thief of Shooting Meteor",
+            "Thief": "Thief of Shooting Meteor",
+            "Wuthering Snow": "Guard of Wuthering Snow",
+            "Guard": "Guard of Wuthering Snow",
+            "Brilliant Stars": "Genius of Brilliant Stars",
+            "Genius": "Genius of Brilliant Stars",
+            "Twilight Line": "Eagle of Twilight Line",
+            "Eagle": "Eagle of Twilight Line",
+            "Lava-Forging": "Firesmith of Lava-Forging",
+            "Firesmith": "Firesmith of Lava-Forging",
+            "Banditry Desert": "Wastelander of Banditry Desert",
+            "Wastelander": "Wastelander of Banditry Desert",
+
+            // Planar Ornament Sets (28 sets)
+            "Fallen Star": "Fallen Star Anchorage",
+            "Anchorage": "Fallen Star Anchorage",
+            "Cosmic Life": "Cosmic Life Sciences Institute",
+            "Life Sciences": "Cosmic Life Sciences Institute",
+            "Converging Stars": "City of Converging Stars",
+            "Stage Zero": "Punklorde Stage Zero",
+            "Punklorde": "Punklorde Stage Zero",
+            "Tengoku": "Tengoku Livestream",
+            "Amphoreus": "Amphoreus, The Eternal Land",
+            "Eternal Land": "Amphoreus, The Eternal Land",
+            "Revelry": "Revelry by the Sea",
+            "Woven Dreams": "Arcadia of Woven Dreams",
+            "Arcadia": "Arcadia of Woven Dreams",
+            "Giant Tree": "Giant Tree of Rapt Brooding",
+            "Rapt Brooding": "Giant Tree of Rapt Brooding",
             "Bone Collection": "Bone Collection's Serene Demesne",
+            "Serene Demesne": "Bone Collection's Serene Demesne",
+            "BananAmusement": "The Wondrous BananAmusement Park",
+            "Lushaka": "Lushaka, the Sunken Seas",
+            "Sunken Seas": "Lushaka, the Sunken Seas",
             "Kalpagni": "Forge of the Kalpagni Lantern",
             "Duran": "Duran, Dynasty of Running Wolves",
-            "Sigonia": "Sigonia, the Unclaimed Desolation",
             "Izumo": "Izumo Gensei and Takama Divine Realm",
-            "Glamoth": "Firmament Frontline: Glamoth",
+            "Takama": "Izumo Gensei and Takama Divine Realm",
+            "Sigonia": "Sigonia, the Unclaimed Desolation",
             "Penacony": "Penacony, Land of the Dreams",
+            "Glamoth": "Firmament Frontline Glamoth",
+            "Firmament": "Firmament Frontline Glamoth",
             "Keel": "Broken Keel",
             "Broken Keel": "Broken Keel",
             "Rutilant": "Rutilant Arena",
-            "Vonwacq": "Sprightly Vonwacq",
+            "Space Sealing": "Space Sealing Station",
+            "Fleet": "Fleet of the Ageless",
             "Talia": "Talia: Kingdom of Banditry",
-            "Salsotto": "Inert Salsotto",
-            "Inert Salsotto": "Inert Salsotto",
+            "Vonwacq": "Sprightly Vonwacq",
+            "Pan-Cosmic": "Pan-Cosmic Commercial Enterprise",
             "Celestial": "Celestial Differentiator",
             "Belobog": "Belobog of the Architects",
-            "Pan-Cosmic": "Pan-Cosmic Commercial Enterprise",
-            "Fleet": "Fleet of the Ageless",
-            "Space Sealing": "Space Sealing Station",
+            "Salsotto": "Inert Salsotto",
+            "Inert Salsotto": "Inert Salsotto",
 
             // Genshin Artifacts
             "Gladiator": "Gladiator's Finale",
@@ -2085,9 +2134,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        Object.entries(planarMap).forEach(([setName, count]) => {
+        const planarEntries = Object.entries(planarMap);
+        planarEntries.forEach(([setName, count]) => {
             if (count >= 2) {
                 summaries.push(formatSetBadge(2, setName));
+            } else if (count === 1 && planarEntries.length === 1) {
+                // If both planar slots (5 and 6) are equipped with valid pieces
+                const p5 = piecesData.find(p => p.pos === 5);
+                const p6 = piecesData.find(p => p.pos === 6);
+                if (p5 && p6 && p5.setName !== 'None' && p6.setName !== 'None') {
+                    summaries.push(formatSetBadge(2, setName));
+                }
             }
         });
 
