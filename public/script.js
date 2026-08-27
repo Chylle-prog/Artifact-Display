@@ -1994,9 +1994,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const formatSetBadge = (count, setName) => {
             const iconUrl = setIconMap[setName];
             const imgTag = (withIcons && iconUrl)
-                ? `<img src="${iconUrl}" style="width: 22px; height: 22px; object-fit: contain; vertical-align: middle; margin-right: 4px; border-radius: 4px; background: rgba(0,0,0,0.3);">`
+                ? `<img src="${iconUrl}" class="set-badge-icon">`
                 : '';
-            return `<span style="display: inline-flex; align-items: center; white-space: nowrap;">${imgTag}${count}pc ${setName}</span>`;
+            return `<span class="set-badge-item">${imgTag}<span>${count}pc ${setName}</span></span>`;
         };
 
         const isZzz = currentGame === 'zzz';
@@ -2017,7 +2017,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     summaries.push(formatSetBadge(2, setName));
                 }
             });
-            return summaries.length > 0 ? summaries.join(' <span style="color: var(--text-dim); margin: 0 4px;">+</span> ') : 'No Active Sets';
+            return summaries.length > 0 ? summaries.join('<span class="set-separator">+</span>') : 'No Active Sets';
         }
 
         // HSR: Slots 1-4 (Cavern Relics), Slots 5-6 (Planar Ornaments)
@@ -2050,7 +2050,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        return summaries.length > 0 ? summaries.join(' <span style="color: var(--text-dim); margin: 0 4px;">+</span> ') : 'No Active Sets';
+        return summaries.length > 0 ? summaries.join('<span class="set-separator">+</span>') : 'No Active Sets';
     }
 
     function renderSlimPieceGrid(piecesData) {
@@ -2155,7 +2155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div>
                                 <strong style="font-size: 1.1rem; color: #fff;">${loadout.name}</strong>
                                 <span style="font-size: 0.75rem; color: var(--text-dim); margin-left: 0.5rem;">Saved ${loadout.savedAt || ''}</span>
-                                <div style="font-size: 0.82rem; color: var(--primary); margin-top: 0.2rem;">Sets: ${setSummaryDisplay}</div>
+                                <div class="loadout-sets-line"><span class="sets-label">Sets:</span> ${setSummaryDisplay}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.8rem;">
                                 <span style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">${loadout.totalRolls} Total Rolls</span>
@@ -2182,7 +2182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="loadout-card-header">
                     <div>
                         <span class="loadout-badge">Current Equipped Loadout</span>
-                        <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.4rem;">Sets: <strong style="color: #fff;">${currentSetSummary}</strong></div>
+                        <div class="loadout-sets-line"><span class="sets-label">Sets:</span> ${currentSetSummary}</div>
                     </div>
                     <div>
                         <span style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">${totalRolls} Total Rolls</span>
