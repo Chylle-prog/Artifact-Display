@@ -2053,6 +2053,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return summaries.length > 0 ? summaries.join(' <span style="color: var(--text-dim); margin: 0 4px;">+</span> ') : 'No Active Sets';
     }
 
+    function renderSlimPieceGrid(piecesData) {
+        if (!piecesData || piecesData.length === 0) return '';
+        return `
+            <div class="slim-loadout-grid">
+                ${piecesData.map(p => {
+                    const fallbackIcon = getSvgFallback(p.slotTitle || 'Slot');
+                    const hasIcon = p.icon && p.icon !== '';
+                    const imgSrc = hasIcon ? p.icon : fallbackIcon;
+
+                    return `
+                        <div class="slim-piece-card tooltip-container" title="${p.slotTitle}: ${p.name || 'Empty Slot'} (${p.rolls} rolls)">
+                            <img src="${imgSrc}" class="slim-piece-icon" onerror="this.onerror=null; this.src='${fallbackIcon}';">
+                            <span class="slim-roll-badge ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls}</span>
+                            <div class="tooltip-content">
+                                <strong style="color: var(--primary);">${p.slotTitle}</strong><br>
+                                ${p.name || 'Empty Slot'}<br>
+                                <span style="color: #ffd700;">${p.rolls} rolls</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
     function renderLoadoutModalContent(char, charIdx) {
         const name = getDisplayName(char);
 
@@ -2115,55 +2140,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Compute active set summaries (condensed 4pc / 2pc)
         const currentSetSummary = getCondensedSetSummary(currentPiecesData);
 
-        // Render Current Equipped Loadout Table
-        const currentTableRowsHtml = currentPiecesData.map(p => `
-            <tr>
-                <td style="font-weight: 600; color: var(--primary);">${p.slotTitle}</td>
-                <td>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        ${p.icon ? `<img src="${p.icon}" class="loadout-relic-icon">` : ''}
-                        <span>${p.name}</span>
-                    </div>
-                </td>
-                <td style="color: var(--text-dim);">
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        ${p.icon ? `<img src="${p.icon}" style="width: 20px; height: 20px; object-fit: contain; border-radius: 4px; background: rgba(0,0,0,0.3);">` : ''}
-                        <span>${p.setName}</span>
-                    </div>
-                </td>
-                <td>
-                    <span class="loadout-rolls-pill ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls} roll${p.rolls !== 1 ? 's' : ''}</span>
-                </td>
-            </tr>
-        `).join('');
-
         // Fetch Saved Loadouts from localStorage
         const savedLoadouts = getSavedLoadouts(name);
 
         const savedLoadoutsCardsHtml = savedLoadouts.length === 0
             ? `<div style="color: var(--text-dim); font-style: italic; font-size: 0.88rem; text-align: center; padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 10px;">No saved loadouts yet. Use the form above to save your current build configuration.</div>`
             : savedLoadouts.map((loadout) => {
-                const savedRowsHtml = (loadout.pieces || []).map(p => `
-                    <tr>
-                        <td style="font-weight: 600; color: var(--primary);">${p.slotTitle}</td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                ${p.icon ? `<img src="${p.icon}" class="loadout-relic-icon">` : ''}
-                                <span>${p.name}</span>
-                            </div>
-                        </td>
-                        <td style="color: var(--text-dim);">
-                            <div style="display: flex; align-items: center; gap: 0.4rem;">
-                                ${p.icon ? `<img src="${p.icon}" style="width: 20px; height: 20px; object-fit: contain; border-radius: 4px; background: rgba(0,0,0,0.3);">` : ''}
-                                <span>${p.setName}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="loadout-rolls-pill ${p.rolls > 0 ? 'good' : 'zero'}">${p.rolls} roll${p.rolls !== 1 ? 's' : ''}</span>
-                        </td>
-                    </tr>
-                `).join('');
-
                 const nameEscaped = name.replace(/'/g, "\\'");
                 const setSummaryDisplay = getCondensedSetSummary(loadout.pieces || []);
 
@@ -2173,26 +2155,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div>
                                 <strong style="font-size: 1.1rem; color: #fff;">${loadout.name}</strong>
                                 <span style="font-size: 0.75rem; color: var(--text-dim); margin-left: 0.5rem;">Saved ${loadout.savedAt || ''}</span>
-                                <div style="font-size: 0.82rem; color: var(--primary); margin-top: 0.2rem;">${setSummaryDisplay}</div>
+                                <div style="font-size: 0.82rem; color: var(--primary); margin-top: 0.2rem;">Sets: ${setSummaryDisplay}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.8rem;">
                                 <span style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">${loadout.totalRolls} Total Rolls</span>
                                 <button type="button" class="btn secondary" onclick="handleDeleteLoadout('${nameEscaped}', '${loadout.id}', ${charIdx})" style="padding: 0.3rem 0.7rem; font-size: 0.78rem; background: rgba(255, 77, 79, 0.15); border-color: #ff4d4f; color: #ff4d4f;">Delete</button>
                             </div>
                         </div>
-                        <table class="loadout-relic-table">
-                            <thead>
-                                <tr>
-                                    <th>Slot</th>
-                                    <th>Piece</th>
-                                    <th>Set</th>
-                                    <th>Rolls</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${savedRowsHtml}
-                            </tbody>
-                        </table>
+                        ${renderSlimPieceGrid(loadout.pieces || [])}
                     </div>
                 `;
             }).join('');
@@ -2219,19 +2189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <table class="loadout-relic-table">
-                    <thead>
-                        <tr>
-                            <th>Slot</th>
-                            <th>Piece</th>
-                            <th>Set</th>
-                            <th>Rolls</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${currentTableRowsHtml}
-                    </tbody>
-                </table>
+                ${renderSlimPieceGrid(currentPiecesData)}
 
                 <!-- Form to Save Current Loadout -->
                 <div class="save-loadout-form">

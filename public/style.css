@@ -794,4 +794,70 @@ input:checked + .slider:before {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Slim Horizontal Loadout Grid Styles */
+.slim-loadout-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.6rem;
+    margin: 0.8rem 0;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .slim-loadout-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.slim-piece-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 0.5rem 0.6rem;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.slim-piece-card:hover {
+    border-color: var(--primary);
+    background: rgba(0, 0, 0, 0.65);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.slim-piece-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.slim-roll-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    min-width: 24px;
+    box-sizing: border-box;
+}
+
+.slim-roll-badge.good {
+    background: rgba(82, 196, 26, 0.25);
+    color: #52c41a;
+    border: 1px solid #52c41a;
+}
+
+.slim-roll-badge.zero {
+    background: rgba(255, 77, 79, 0.25);
+    color: #ff4d4f;
+    border: 1px solid #ff4d4f;
+}
+
+
 
