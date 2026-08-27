@@ -1923,48 +1923,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Known HSR / Genshin / ZZZ set prefix maps
         const knownSetPrefixes = {
+            // HSR Relics & Planars
+            "Sacerdos": "Sacerdos' Reliquary",
             "Deliverer": "Hero of Triumphant Song",
             "Hero of Triumphant Song": "Hero of Triumphant Song",
-            "Lushaka": "Lushaka, the Sunken Seas",
-            "Musketeer": "Musketeer of Wild Wheat",
-            "Passerby": "Passerby of Wandering Cloud",
+            "Poet": "Poet of Mourning Collapse",
+            "Scholar": "Scholar Lost in Erudition",
+            "Valorous": "The Wind-Soaring Valorous",
+            "Wind-Soaring": "The Wind-Soaring Valorous",
+            "Iron Cavalry": "Iron Cavalry Against the Scourge",
+            "Watchmaker": "Watchmaker, Master of Dream Machinations",
             "Pioneer": "Pioneer Diver of Dead Waters",
-            "Wastelander": "Wastelander of Banditry Desert",
-            "Eagle": "Eagle of Twilight Line",
-            "Thief": "Thief of Shooting Meteor",
-            "Champion": "Champion of Streetwise Boxing",
-            "Guard": "Guard of Wuthering Snow",
-            "Firesmith": "Firesmith of Lava-Forging",
-            "Genius": "Genius of Brilliant Stars",
-            "Sizzling": "Band of Sizzling Thunder",
-            "Longevous": "Longevous Disciple",
-            "Messenger": "Messenger Traversing Hackerspace",
+            "Diver": "Pioneer Diver of Dead Waters",
+            "Prisoner": "Prisoner in Deep Confinement",
             "Ashblazing": "The Ashblazing Grand Duke",
             "Grand Duke": "The Ashblazing Grand Duke",
-            "Prisoner": "Prisoner in Deep Confinement",
-            "Watchmaker": "Watchmaker, Master of Dream Machinations",
-            "Iron Cavalry": "Iron Cavalry Against the Scourge",
-            "Valorous": "The Wind-Soaring Valorous",
-            "Sanguine": "Sanguine Cross",
-            "Scholar": "Scholar Lost in Erudition",
-            "Space Sealing": "Space Sealing Station",
-            "Fleet": "Fleet of the Ageless",
-            "Pan-Cosmic": "Pan-Cosmic Commercial Enterprise",
-            "Belobog": "Belobog of the Architects",
-            "Celestial": "Celestial Differentiator",
-            "Salsotto": "Inert Salsotto",
-            "Talia": "Talia: Kingdom of Banditry",
-            "Vonwacq": "Sprightly Vonwacq",
-            "Rutilant": "Rutilant Arena",
-            "Broken Keel": "Broken Keel",
-            "Penacony": "Penacony, Land of the Dreams",
-            "Glamoth": "Firmament Frontline: Glamoth",
-            "Izumo": "Izumo Gensei and Takama Divine Realm",
-            "Sigonia": "Sigonia, the Unclaimed Desolation",
-            "Duran": "Duran, Dynasty of Running Wolves",
-            "Kalpagni": "Forge of the Kalpagni Lantern",
+            "Messenger": "Messenger Traversing Hackerspace",
+            "Hackerspace": "Messenger Traversing Hackerspace",
+            "Longevous": "Longevous Disciple",
+            "Disciple": "Longevous Disciple",
+            "Wastelander": "Wastelander of Banditry Desert",
+            "Thief": "Thief of Shooting Meteor",
+            "Eagle": "Eagle of Twilight Line",
+            "Sizzling": "Band of Sizzling Thunder",
+            "Band of Sizzling": "Band of Sizzling Thunder",
+            "Genius": "Genius of Brilliant Stars",
+            "Firesmith": "Firesmith of Lava-Forging",
+            "Guard": "Guard of Wuthering Snow",
+            "Champion": "Champion of Streetwise Boxing",
+            "Hunter": "Hunter of Glacial Forest",
+            "Knight": "Knight of Purity Palace",
+            "Musketeer": "Musketeer of Wild Wheat",
+            "Passerby": "Passerby of Wandering Cloud",
+            "Lushaka": "Lushaka, the Sunken Seas",
             "BananAmusement": "The Wondrous BananAmusement Park",
-            "Bone Collection": "Bone Collection's Serene Demesne"
+            "Bone Collection": "Bone Collection's Serene Demesne",
+            "Kalpagni": "Forge of the Kalpagni Lantern",
+            "Duran": "Duran, Dynasty of Running Wolves",
+            "Sigonia": "Sigonia, the Unclaimed Desolation",
+            "Izumo": "Izumo Gensei and Takama Divine Realm",
+            "Glamoth": "Firmament Frontline: Glamoth",
+            "Penacony": "Penacony, Land of the Dreams",
+            "Keel": "Broken Keel",
+            "Broken Keel": "Broken Keel",
+            "Rutilant": "Rutilant Arena",
+            "Vonwacq": "Sprightly Vonwacq",
+            "Talia": "Talia: Kingdom of Banditry",
+            "Salsotto": "Inert Salsotto",
+            "Inert Salsotto": "Inert Salsotto",
+            "Celestial": "Celestial Differentiator",
+            "Belobog": "Belobog of the Architects",
+            "Pan-Cosmic": "Pan-Cosmic Commercial Enterprise",
+            "Fleet": "Fleet of the Ageless",
+            "Space Sealing": "Space Sealing Station",
+
+            // Genshin Artifacts
+            "Gladiator": "Gladiator's Finale",
+            "Wanderer": "Wanderer's Troupe",
+            "Noblesse": "Noblesse Oblige",
+            "Viridescent": "Viridescent Venerer",
+            "Crimson": "Crimson Witch of Flames",
+            "Blizzard": "Blizzard Strayer",
+            "Emblem": "Emblem of Severed Fate",
+            "Deepwood": "Deepwood Memories",
+            "Gilded": "Gilded Dreams",
+            "Marechaussee": "Marechaussee Hunter",
+            "Golden Troupe": "Golden Troupe",
+            "Obsidian": "Obsidian Codex",
+            "Scroll": "Scroll of the Hero of Cinder City",
+
+            // ZZZ Drive Discs
+            "Woodpecker": "Woodpecker Electro",
+            "Thunder Metal": "Thunder Metal",
+            "Chaotic": "Chaotic Metal",
+            "Fanged": "Fanged Metal",
+            "Polar": "Polar Metal",
+            "Freedom": "Freedom Blues",
+            "Astral": "Astral Voice",
+            "Proto": "Proto Punk",
+            "Branch": "Branch & Blade Song"
         };
 
         for (const [prefix, fullSetName] of Object.entries(knownSetPrefixes)) {
@@ -1973,8 +2010,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Generic fallback for possessive names:
         if (pieceName.includes("'s ")) {
             return pieceName.split("'s ")[0].trim();
+        }
+        if (pieceName.includes("' ")) {
+            return pieceName.split("' ")[0].trim();
         }
 
         return pieceName;
